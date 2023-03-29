@@ -69,6 +69,7 @@ import warnings
 from xml.etree import cElementTree as ET
 import time
 from datetime import datetime, timedelta
+from tempfile import NamedTemporaryFile
 
 EXCEL_STARTDATE = datetime(1899,12,30)
 MAX_XL_ROWS = 1048576
@@ -189,9 +190,9 @@ def readxl_check_excelfile(fn):
         fn = fn.path
     # test for django stream only file or non-django open file object
     elif 'read' in dir(fn):
-        with open('pylightxlIOtemp_wb.xlsx', 'wb') as f:
+        with NamedTemporaryFile(prefix='pylightxlIOtemp_wb', suffix='.xlsx', mode='wb', delete=False) as f:
             f.write(fn.read())
-        fn = 'pylightxlIOtemp_wb.xlsx'
+        fn = f.name
 
     if type(fn) is not str:
         raise UserWarning('pylightxl - Incorrect file entry ({}).'.format(fn))
